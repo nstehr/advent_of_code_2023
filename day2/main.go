@@ -9,10 +9,7 @@ import (
 )
 
 const (
-	numRed   = 12
-	numBlue  = 14
-	numGreen = 13
-	input    = "input.txt"
+	input = "input.txt"
 )
 
 func main() {
@@ -21,21 +18,22 @@ func main() {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	sum := 0
 	scanner := bufio.NewScanner(file)
+	sum := 0
 	for scanner.Scan() {
 		text := scanner.Text()
 
 		split := strings.Split(text, ":")
-		game := split[0]
+
 		selections := split[1]
-		gameNum, err := strconv.Atoi(strings.Split(game, " ")[1])
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		rounds := strings.Split(selections, ";")
-		valid := true
+		maxRed := 0
+		maxBlue := 0
+		maxGreen := 0
 		for _, round := range rounds {
 			colours := strings.Split(round, ",")
 			for _, colour := range colours {
@@ -46,26 +44,21 @@ func main() {
 				}
 				switch countColour[1] {
 				case "red":
-					if count > numRed {
-						valid = false
+					if count > maxRed {
+						maxRed = count
 					}
 				case "blue":
-					if count > numBlue {
-						valid = false
+					if count > maxBlue {
+						maxBlue = count
 					}
 				case "green":
-					if count > numGreen {
-						valid = false
+					if count > maxGreen {
+						maxGreen = count
 					}
 				}
 			}
 		}
-		if valid {
-			sum = sum + gameNum
-			log.Println(text)
-			log.Println("----")
-
-		}
+		sum = sum + (maxBlue * maxRed * maxGreen)
 	}
 	log.Println(sum)
 }
